@@ -39,8 +39,19 @@ app.component('product-display', {
           v-on:click="addToCart">
           Add to Cart
         </button>
+
+        <button 
+        class="button" 
+        :class="{ disabledButton: !inStock }" 
+        :disabled="!inStock" 
+        v-on:click="removeLastCartItem">
+        Remove Item
+      </button>
+
       </div>
     </div>
+    <review-list :reviews='reviews' v-if='reviews.length'></review-list>
+    <review-form @review-submitted='addReview'></review-form>
   </div>`,
   data() {
     return {
@@ -51,16 +62,27 @@ app.component('product-display', {
         variants: [
           { id: 2234, color: 'green', image: './assets/images/socks_green.jpg', quantity: 50 },
           { id: 2235, color: 'blue', image: './assets/images/socks_blue.jpg', quantity: 0 },
-        ]
+        ],
+        reviews:[]
+
     }
   },
   methods: {
       addToCart() {
-          this.cart += 1
+          this.$emit('add-to-cart', this.variants[this.selectedVariant].id)
+      },
+      removeLastCartItem(){
+          this.$emit('remove-last-item')
       },
       updateVariant(index) {
           this.selectedVariant = index
+      },
+      // payload contains review object. Rating, Name, Review
+      addReview(review){
+        this.reviews.push(review)
       }
+
+      
   },
   computed: {
       title() {
